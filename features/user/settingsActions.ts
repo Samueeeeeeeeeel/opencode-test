@@ -57,6 +57,7 @@ export async function updateSettings(formData: FormData) {
       budgetAlerts: boolFromForm(formData.get('budgetAlerts')),
       installmentReminders: boolFromForm(formData.get('installmentReminders')),
       goalReminders: boolFromForm(formData.get('goalReminders')),
+      onboardingCompleted: boolFromForm(formData.get('onboardingCompleted')),
     })
     .onConflictDoUpdate({
       target: userSettings.userId,
@@ -68,6 +69,7 @@ export async function updateSettings(formData: FormData) {
         budgetAlerts: boolFromForm(formData.get('budgetAlerts')),
         installmentReminders: boolFromForm(formData.get('installmentReminders')),
         goalReminders: boolFromForm(formData.get('goalReminders')),
+        onboardingCompleted: boolFromForm(formData.get('onboardingCompleted')),
         updatedAt: new Date(),
       },
     });

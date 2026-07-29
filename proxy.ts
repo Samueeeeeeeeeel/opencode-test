@@ -32,6 +32,7 @@ export async function proxy(request: Request) {
   const isPublic = publicPaths.some(
     (p) => pathWithoutLocale === p || pathWithoutLocale.startsWith(`${p}/`)
   );
+  const isOnboarding = pathWithoutLocale === '/onboarding';
   const isApi = pathname.startsWith('/api');
   const isStatic =
     pathname.startsWith('/_next') ||
