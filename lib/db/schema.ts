@@ -14,7 +14,7 @@ import {
   primaryKey,
 } from 'drizzle-orm/pg-core';
 
-export const accountTypeEnum = pgEnum('account_type', [
+export const bankAccountTypeEnum = pgEnum('bank_account_type', [
   'checking',
   'savings',
   'cash',
@@ -60,6 +60,8 @@ export const themeEnum = pgEnum('theme', ['light', 'dark', 'system']);
 
 export const languageEnum = pgEnum('language', ['es', 'en']);
 
+/* ─── NextAuth tables ─── */
+
 export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: text('name'),
@@ -71,6 +73,32 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
 });
 
+export const accounts = pgTable(
+  'accounts',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    type: text('type').notNull(),
+    provider: text('provider').notNull(),
+    providerAccountId: text('provider_account_id').notNull(),
+    refreshToken: text('refresh_token'),
+    accessToken: text('access_token'),
+    expiresAt: integer('expires_at'),
+    tokenType: text('token_type'),
+    scope: text('scope'),
+    idToken: text('id_token'),
+    sessionState: text('session_state'),
+  },
+  (table) => [
+    uniqueIndex('idx_accounts_provider_provider_account_id').on(
+      table.provider,
+      table.providerAccountId
+    ),
+  ]
+);
+
 export const sessions = pgTable('sessions', {
   id: uuid('id').defaultRandom().primaryKey(),
   sessionToken: text('session_token').notNull().unique(),
@@ -81,15 +109,32 @@ export const sessions = pgTable('sessions', {
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
 });
 
-export const accounts = pgTable(
-  'accounts',
+export const verificationTokens = pgTable(
+  'verification_tokens',
+  {
+    identifier: text('identifier').notNull(),
+    token: text('token').notNull(),
+    expires: timestamp('expires', { mode: 'date' }).notNull(),
+  },
+  (table) => [
+    uniqueIndex('idx_verification_tokens_identifier_token').on(
+      table.identifier,
+      table.token
+    ),
+  ]
+);
+
+/* ─── Bank accounts ─── */
+
+export const bankAccounts = pgTable(
+  'bank_accounts',
   {
     id: uuid('id').defaultRandom().primaryKey(),
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
-    type: accountTypeEnum('type').notNull(),
+    type: bankAccountTypeEnum('type').notNull(),
     currency: text('currency').default('CLP').notNull(),
     color: text('color').notNull(),
     icon: text('icon'),
@@ -97,8 +142,10 @@ export const accounts = pgTable(
     createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
   },
-  (table) => [index('idx_accounts_user').on(table.userId)]
+  (table) => [index('idx_bank_accounts_user').on(table.userId)]
 );
+
+/* ─── Categories ─── */
 
 export const categories = pgTable(
   'categories',
@@ -115,8 +162,10 @@ export const categories = pgTable(
     createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
   },
-    (table) => [index('idx_categories_user').on(table.userId)]
+  (table) => [index('idx_categories_user').on(table.userId)]
 );
+
+/* ─── Tags ─── */
 
 export const tags = pgTable(
   'tags',
@@ -131,6 +180,8 @@ export const tags = pgTable(
   (table) => [uniqueIndex('idx_tags_user_name').on(table.userId, table.name)]
 );
 
+/* ─── Transactions ─── */
+
 export const transactions = pgTable(
   'transactions',
   {
@@ -140,7 +191,7 @@ export const transactions = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     accountId: uuid('account_id')
       .notNull()
-      .references(() => accounts.id, { onDelete: 'restrict' }),
+      .references(() => bankAccounts.id, { onDelete: 'restrict' }),
     categoryId: uuid('category_id')
       .notNull()
       .references(() => categories.id, { onDelete: 'restrict' }),
@@ -176,6 +227,8 @@ export const transactionTags = pgTable(
   (table) => [primaryKey({ columns: [table.transactionId, table.tagId] })]
 );
 
+/* ─── Installments ─── */
+
 export const installments = pgTable(
   'installments',
   {
@@ -185,7 +238,7 @@ export const installments = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     accountId: uuid('account_id')
       .notNull()
-      .references(() => accounts.id, { onDelete: 'restrict' }),
+      .references(() => bankAccounts.id, { onDelete: 'restrict' }),
     categoryId: uuid('category_id')
       .notNull()
       .references(() => categories.id, { onDelete: 'restrict' }),
@@ -214,6 +267,8 @@ export const installmentTags = pgTable(
   (table) => [primaryKey({ columns: [table.installmentId, table.tagId] })]
 );
 
+/* ─── Recurring transactions ─── */
+
 export const recurringTransactions = pgTable(
   'recurring_transactions',
   {
@@ -223,7 +278,7 @@ export const recurringTransactions = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     accountId: uuid('account_id')
       .notNull()
-      .references(() => accounts.id, { onDelete: 'restrict' }),
+      .references(() => bankAccounts.id, { onDelete: 'restrict' }),
     categoryId: uuid('category_id')
       .notNull()
       .references(() => categories.id, { onDelete: 'restrict' }),
@@ -254,6 +309,8 @@ export const recurringTags = pgTable(
   (table) => [primaryKey({ columns: [table.recurringId, table.tagId] })]
 );
 
+/* ─── Transfers ─── */
+
 export const transfers = pgTable(
   'transfers',
   {
@@ -263,10 +320,10 @@ export const transfers = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     fromAccountId: uuid('from_account_id')
       .notNull()
-      .references(() => accounts.id, { onDelete: 'restrict' }),
+      .references(() => bankAccounts.id, { onDelete: 'restrict' }),
     toAccountId: uuid('to_account_id')
       .notNull()
-      .references(() => accounts.id, { onDelete: 'restrict' }),
+      .references(() => bankAccounts.id, { onDelete: 'restrict' }),
     amount: bigint('amount', { mode: 'number' }).notNull(),
     date: date('date').notNull(),
     note: text('note'),
@@ -274,6 +331,8 @@ export const transfers = pgTable(
     updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
   }
 );
+
+/* ─── Budgets ─── */
 
 export const budgets = pgTable(
   'budgets',
@@ -294,6 +353,8 @@ export const budgets = pgTable(
   (table) => [index('idx_budgets_user_month').on(table.userId, table.month, table.year)]
 );
 
+/* ─── Goals ─── */
+
 export const goals = pgTable(
   'goals',
   {
@@ -305,7 +366,7 @@ export const goals = pgTable(
     targetAmount: bigint('target_amount', { mode: 'number' }).notNull(),
     currentAmount: bigint('current_amount', { mode: 'number' }).default(0).notNull(),
     targetDate: date('target_date'),
-    accountId: uuid('account_id').references(() => accounts.id, {
+    accountId: uuid('account_id').references(() => bankAccounts.id, {
       onDelete: 'set null',
     }),
     color: text('color'),
@@ -331,6 +392,8 @@ export const goalTransactions = pgTable(
     updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
   }
 );
+
+/* ─── Debts ─── */
 
 export const debts = pgTable(
   'debts',
@@ -368,6 +431,8 @@ export const debtPayments = pgTable(
   }
 );
 
+/* ─── User settings ─── */
+
 export const userSettings = pgTable('user_settings', {
   userId: uuid('user_id')
     .primaryKey()
@@ -384,6 +449,8 @@ export const userSettings = pgTable('user_settings', {
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
 });
+
+/* ─── Push subscriptions ─── */
 
 export const pushSubscriptions = pgTable(
   'push_subscriptions',
