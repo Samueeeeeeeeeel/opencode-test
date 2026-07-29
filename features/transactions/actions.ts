@@ -93,6 +93,7 @@ export async function getTransactions(
 }
 
 export async function createTransaction(formData: FormData) {
+  try {
   const session = await auth();
   if (!session?.user?.id) return { error: 'No autorizado' };
 
@@ -177,6 +178,10 @@ export async function createTransaction(formData: FormData) {
 
   revalidatePath('/[lang]/transactions');
   return { success: true, transaction: tx };
+  } catch (e) {
+    console.error('createTransaction error:', e);
+    return { error: { form: [e instanceof Error ? e.message : 'Error inesperado'] } };
+  }
 }
 
 export async function confirmTransaction(formData: FormData) {
@@ -258,6 +263,7 @@ export async function softDeleteTransaction(formData: FormData) {
 }
 
 export async function createInstallmentTransaction(formData: FormData) {
+  try {
   const session = await auth();
   if (!session?.user?.id) return { error: 'No autorizado' };
 
@@ -370,4 +376,8 @@ export async function createInstallmentTransaction(formData: FormData) {
 
   revalidatePath('/[lang]/transactions');
   return { success: true, installment };
+  } catch (e) {
+    console.error('createInstallmentTransaction error:', e);
+    return { error: { form: [e instanceof Error ? e.message : 'Error inesperado'] } };
+  }
 }

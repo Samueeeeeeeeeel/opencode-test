@@ -36,6 +36,7 @@ export function MovementForm({
   async function onSubmit(data: CreateTransactionInput) {
     setMessage(null);
 
+    try {
     if (activeType === 'installment') {
       if (!data.amount || data.amount <= 0) {
         setMessage('Ingresa un monto válido');
@@ -94,6 +95,9 @@ export function MovementForm({
         router.refresh();
         onClose?.();
       }
+    }
+    } catch (e) {
+      setMessage(e instanceof Error ? e.message : 'Error de conexión');
     }
   }
 
