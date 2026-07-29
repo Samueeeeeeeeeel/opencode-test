@@ -37,17 +37,21 @@ async function getAccountBalance(
   return result[0]?.balance ?? 0;
 }
 
-export async function getTransactions(filters?: {
-  type?: string;
-  categoryId?: string;
-  accountId?: string;
-  status?: string;
-  from?: string;
-  to?: string;
-  search?: string;
-}) {
+export async function getTransactions(
+  filters?: {
+    type?: string;
+    categoryId?: string;
+    accountId?: string;
+    status?: string;
+    from?: string;
+    to?: string;
+    search?: string;
+  },
+  page = 1,
+  pageSize = 20
+) {
   const session = await auth();
-  if (!session?.user?.id) return [];
+  if (!session?.user?.id) return { transactions: [], total: 0 };
 
   const conditions = [eq(transactions.userId, session.user!.id!)];
 
@@ -63,14 +67,29 @@ export async function getTransactions(filters?: {
     );
   }
 
-  return db.query.transactions.findMany({
-    where: and(...conditions),
-    orderBy: (t, { desc }) => [desc(t.date), desc(t.createdAt)],
-    with: {
-      account: true,
-      category: true,
-    },
-  });
+  const where = and(...conditions);
+  const offset = (page - 1) * pageSize;
+
+  const [results, countResult] = await Promise.all([
+    db.query.transactions.findMany({
+      where,
+      orderBy: (t, { desc }) => [desc(t.date), desc(t.createdAt)],
+      with: { account: true, category: true },
+      limit: pageSize,
+      offset,
+    }),
+    db.select({ count: sql<number>`count(*)` })
+      .from(transactions)
+      .where(where),
+  ]);
+
+  return {
+    transactions: results,
+    total: Number(countResult[0]?.count ?? 0),
+    page,
+    pageSize,
+    totalPages: Math.ceil(Number(countResult[0]?.count ?? 0) / pageSize),
+  };
 }
 
 export async function createTransaction(formData: FormData) {
@@ -80,11 +99,35 @@ export async function createTransaction(formData: FormData) {
   const tagIdsRaw = formData.get('tagIds');
   const tagIds = tagIdsRaw ? JSON.parse(tagIdsRaw as string) : [];
 
+  let accountId = formData.get('accountId') as string || '';
+  let categoryId = formData.get('categoryId') as string || '';
+
+  // Auto-assign default account if not provided
+  if (!accountId) {
+    const defaultAccount = await db.query.bankAccounts.findFirst({
+      where: (a, { eq }) => eq(a.userId, session.user!.id!),
+    });
+    accountId = defaultAccount?.id || '';
+  }
+
+  // Auto-assign default category if not provided
+  if (!categoryId) {
+    const type = formData.get('type') as string;
+    const defaultCategory = await db.query.categories.findFirst({
+      where: (c, { and, eq }) => and(eq(c.userId, session.user!.id!), eq(c.type, type as 'income' | 'expense')),
+    });
+    categoryId = defaultCategory?.id || '';
+  }
+
+  if (!accountId || !categoryId) {
+    return { error: { form: ['Necesitas crear al menos una cuenta y una categoría'] } };
+  }
+
   const parsed = createTransactionSchema.safeParse({
     type: formData.get('type'),
     amount: formData.get('amount'),
-    accountId: formData.get('accountId'),
-    categoryId: formData.get('categoryId'),
+    accountId,
+    categoryId,
     date: formData.get('date'),
     status: formData.get('status') || 'confirmed',
     note: formData.get('note') || undefined,
@@ -95,8 +138,7 @@ export async function createTransaction(formData: FormData) {
     return { error: parsed.error.flatten().fieldErrors };
   }
 
-  const { type, amount, accountId, categoryId, date, status, note } =
-    parsed.data;
+  const { type, amount, date, status, note } = parsed.data;
 
   if (status === 'confirmed' && type === 'expense') {
     const balance = await getAccountBalance(
@@ -142,6 +184,7 @@ export async function confirmTransaction(formData: FormData) {
   if (!session?.user?.id) return { error: 'No autorizado' };
 
   const id = formData.get('transactionId') as string;
+  const clientVersion = formData.get('version');
   if (!id) return { error: 'ID requerido' };
 
   const tx = await db.query.transactions.findFirst({
@@ -150,6 +193,13 @@ export async function confirmTransaction(formData: FormData) {
 
   if (!tx || tx.userId !== session.user!.id!) {
     return { error: 'No autorizado' };
+  }
+
+  if (clientVersion !== null && clientVersion !== undefined) {
+    const expectedVersion = Number(clientVersion);
+    if (tx.version !== expectedVersion) {
+      return { error: 'conflict', message: 'La transacción fue modificada por otro usuario. Recarga la página.' };
+    }
   }
 
   if (tx.type === 'expense') {
@@ -164,10 +214,15 @@ export async function confirmTransaction(formData: FormData) {
     }
   }
 
-  await db
+  const [updated] = await db
     .update(transactions)
     .set({ status: 'confirmed', updatedAt: new Date(), version: tx.version + 1 })
-    .where(eq(transactions.id, id));
+    .where(and(eq(transactions.id, id), eq(transactions.version, tx.version)))
+    .returning();
+
+  if (!updated) {
+    return { error: 'conflict', message: 'Conflicto de concurrencia. Recarga la página.' };
+  }
 
   revalidatePath('/[lang]/transactions');
   return { success: true };
@@ -188,10 +243,15 @@ export async function softDeleteTransaction(formData: FormData) {
     return { error: 'No autorizado' };
   }
 
-  await db
+  const [updated] = await db
     .update(transactions)
     .set({ status: 'pending', updatedAt: new Date(), version: tx.version + 1 })
-    .where(eq(transactions.id, id));
+    .where(and(eq(transactions.id, id), eq(transactions.version, tx.version)))
+    .returning();
+
+  if (!updated) {
+    return { error: 'conflict', message: 'Conflicto de concurrencia. Recarga la página.' };
+  }
 
   revalidatePath('/[lang]/transactions');
   return { success: true };
@@ -204,11 +264,34 @@ export async function createInstallmentTransaction(formData: FormData) {
   const tagIdsRaw = formData.get('tagIds');
   const tagIds = tagIdsRaw ? JSON.parse(tagIdsRaw as string) : [];
 
+  let accountId = formData.get('accountId') as string || '';
+  let categoryId = formData.get('categoryId') as string || '';
+
+  // Auto-assign default account if not provided
+  if (!accountId) {
+    const defaultAccount = await db.query.bankAccounts.findFirst({
+      where: (a, { eq }) => eq(a.userId, session.user!.id!),
+    });
+    accountId = defaultAccount?.id || '';
+  }
+
+  // Auto-assign default category if not provided
+  if (!categoryId) {
+    const defaultCategory = await db.query.categories.findFirst({
+      where: (c, { and, eq }) => and(eq(c.userId, session.user!.id!), eq(c.type, 'expense')),
+    });
+    categoryId = defaultCategory?.id || '';
+  }
+
+  if (!accountId || !categoryId) {
+    return { error: { form: ['Necesitas crear al menos una cuenta y una categoría'] } };
+  }
+
   const parsed = createInstallmentSchema.safeParse({
     type: formData.get('type'),
     totalAmount: formData.get('totalAmount'),
-    accountId: formData.get('accountId'),
-    categoryId: formData.get('categoryId'),
+    accountId,
+    categoryId,
     numberOfInstallments: formData.get('numberOfInstallments'),
     startDate: formData.get('startDate'),
     note: formData.get('note') || undefined,
@@ -221,8 +304,6 @@ export async function createInstallmentTransaction(formData: FormData) {
 
   const {
     totalAmount,
-    accountId,
-    categoryId,
     numberOfInstallments,
     startDate,
     note,

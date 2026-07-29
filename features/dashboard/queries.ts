@@ -49,6 +49,25 @@ export async function getDashboardData(closingDay: number = 1) {
   const expenses =
     monthSummary.find((r) => r.type === 'expense')?.total ?? 0;
 
+  // Credit: installment payments this month
+  const installmentPayments = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)`,
+    })
+    .from(transactions)
+    .where(
+      and(
+        eq(transactions.userId, userId),
+        eq(transactions.type, 'expense'),
+        eq(transactions.status, 'confirmed'),
+        sql`${transactions.installmentId} IS NOT NULL`,
+        sql`${transactions.date} >= ${startStr}`,
+        sql`${transactions.date} <= ${endStr}`
+      )
+    );
+
+  const credit = installmentPayments[0]?.total ?? 0;
+
   const expenseByCategory = await db
     .select({
       categoryId: transactions.categoryId,
@@ -205,6 +224,7 @@ export async function getDashboardData(closingDay: number = 1) {
     totalBalance: totalBalance[0]?.balance ?? 0,
     income,
     expenses,
+    credit,
     balance: income - expenses,
     expenseByCategory: expenseByCategory.map((e) => ({
       name: e.categoryName,

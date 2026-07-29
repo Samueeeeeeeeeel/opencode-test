@@ -38,8 +38,8 @@ export function InstallmentForm({
     const fd = new FormData();
     fd.set('type', data.type);
     fd.set('totalAmount', String(data.totalAmount));
-    fd.set('accountId', data.accountId);
-    fd.set('categoryId', data.categoryId);
+    fd.set('accountId', data.accountId || '');
+    fd.set('categoryId', data.categoryId || '');
     fd.set('numberOfInstallments', String(data.numberOfInstallments));
     fd.set('startDate', data.startDate);
     if (data.note) fd.set('note', data.note);

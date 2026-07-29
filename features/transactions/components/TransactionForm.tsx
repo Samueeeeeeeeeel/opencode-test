@@ -35,8 +35,8 @@ export function TransactionForm({
     const fd = new FormData();
     fd.set('type', data.type);
     fd.set('amount', String(data.amount));
-    fd.set('accountId', data.accountId);
-    fd.set('categoryId', data.categoryId);
+    fd.set('accountId', data.accountId || '');
+    fd.set('categoryId', data.categoryId || '');
     fd.set('date', data.date);
     fd.set('status', data.status || 'confirmed');
     if (data.note) fd.set('note', data.note);

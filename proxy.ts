@@ -1,25 +1,13 @@
 import { NextResponse } from 'next/server';
-import { match } from '@formatjs/intl-localematcher';
-import Negotiator from 'negotiator';
-import { SUPPORTED_LOCALES } from '@/lib/constants';
-import { auth } from '@/features/auth/auth';
+import type { NextRequest } from 'next/server';
 
-const locales = SUPPORTED_LOCALES as unknown as string[];
+const locales = ['es', 'en'];
 const defaultLocale = 'es';
 
 const publicPaths = ['/login', '/register'];
 
-function getLocale(request: Request): string {
-  const negotiatorHeaders: Record<string, string> = {};
-  request.headers.forEach((value, key) => {
-    negotiatorHeaders[key] = value;
-  });
-  const languages = new Negotiator({ headers: negotiatorHeaders }).languages();
-  return match(languages, locales, defaultLocale);
-}
-
-export async function proxy(request: Request) {
-  const { pathname } = new URL(request.url);
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
   const locale = locales.find(
     (l) => pathname.startsWith(`/${l}/`) || pathname === `/${l}`
@@ -32,7 +20,6 @@ export async function proxy(request: Request) {
   const isPublic = publicPaths.some(
     (p) => pathWithoutLocale === p || pathWithoutLocale.startsWith(`${p}/`)
   );
-  const isOnboarding = pathWithoutLocale === '/onboarding';
   const isApi = pathname.startsWith('/api');
   const isStatic =
     pathname.startsWith('/_next') ||
@@ -44,29 +31,19 @@ export async function proxy(request: Request) {
 
   if (isStatic || isApi) return;
 
-  // Redirect to locale-prefixed path
   if (!locale) {
-    const detectedLocale = getLocale(request);
-    const newUrl = new URL(request.url);
-    newUrl.pathname = `/${detectedLocale}${pathname}`;
+    const acceptLanguage = request.headers.get('accept-language') || '';
+    const detected = acceptLanguage.includes('en') ? 'en' : defaultLocale;
+    const newUrl = request.nextUrl.clone();
+    newUrl.pathname = `/${detected}${pathname}`;
     return NextResponse.redirect(newUrl);
   }
 
-  // Auth protection
-  if (!isPublic) {
-    const session = await auth();
-    if (!session?.user) {
-      const loginUrl = new URL(request.url);
-      loginUrl.pathname = `/${locale}/login`;
-      return NextResponse.redirect(loginUrl);
-    }
-  }
-
-  return;
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    '/((?!_next|static|favicon.ico|manifest|sw\\.js|icons|.*\\.png|.*\\.svg).*)',
+    '/((?!_next|static|favicon.ico|manifest|sw\\.js|icons|.*\\.png|.*\\.svg|api).*)',
   ],
 };
