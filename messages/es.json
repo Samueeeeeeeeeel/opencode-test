@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "dashboard": "Panel",
+    "transactions": "Transacciones",
+    "accounts": "Cuentas",
+    "categories": "Categorías",
+    "tags": "Etiquetas",
+    "budgets": "Presupuestos",
+    "goals": "Metas de ahorro",
+    "debts": "Deudas",
+    "reports": "Reportes",
+    "settings": "Configuración",
+    "profile": "Perfil"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "confirm": "Confirmar",
+    "loading": "Cargando...",
+    "search": "Buscar",
+    "noResults": "Sin resultados",
+    "currency": "CLP",
+    "income": "Ingreso",
+    "expense": "Gasto",
+    "pending": "Pendiente",
+    "confirmed": "Confirmada",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "balance": "Saldo total",
+    "income": "Ingresos",
+    "expenses": "Gastos",
+    "balanceLabel": "Balance",
+    "upcomingCommitments": "Compromisos próximos",
+    "budgetProgress": "Progreso de presupuestos",
+    "noData": "No hay datos para mostrar"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "register": "Crear cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "name": "Nombre",
+    "rememberSession": "Recordar sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?"
+  },
+  "accounts": {
+    "title": "Cuentas",
+    "create": "Crear cuenta",
+    "edit": "Editar cuenta",
+    "name": "Nombre de la cuenta",
+    "type": "Tipo",
+    "balance": "Saldo",
+    "noAccounts": "No tienes cuentas creadas"
+  },
+  "settings": {
+    "title": "Configuración",
+    "closingDay": "Día de cierre de mes",
+    "theme": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "language": "Idioma",
+    "notifications": "Notificaciones"
+  },
+  "onboarding": {
+    "welcome": "¡Bienvenido a Aford!",
+    "step1": "Crea tus cuentas",
+    "step2": "Crea tus categorías",
+    "step3": "Configura tu mes",
+    "finish": "¡Empezar!"
+  }
+}

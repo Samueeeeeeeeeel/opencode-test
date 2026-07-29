@@ -1,0 +1,9 @@
+export type AccountType = 'checking' | 'savings' | 'cash' | 'credit_card';
+export type TransactionType = 'income' | 'expense';
+export type TransactionStatus = 'confirmed' | 'pending';
+export type InstallmentStatus = 'active' | 'completed' | 'cancelled';
+export type RecurringFrequency = 'weekly' | 'biweekly' | 'monthly' | 'yearly';
+export type GoalStatus = 'active' | 'completed' | 'cancelled';
+export type DebtStatus = 'active' | 'paid' | 'cancelled';
+export type Theme = 'light' | 'dark' | 'system';
+export type Language = 'es' | 'en';

@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "accounts": "Accounts",
+    "categories": "Categories",
+    "tags": "Tags",
+    "budgets": "Budgets",
+    "goals": "Savings Goals",
+    "debts": "Debts",
+    "reports": "Reports",
+    "settings": "Settings",
+    "profile": "Profile"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "search": "Search",
+    "noResults": "No results",
+    "currency": "CLP",
+    "income": "Income",
+    "expense": "Expense",
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "balance": "Total Balance",
+    "income": "Income",
+    "expenses": "Expenses",
+    "balanceLabel": "Balance",
+    "upcomingCommitments": "Upcoming Commitments",
+    "budgetProgress": "Budget Progress",
+    "noData": "No data to display"
+  },
+  "auth": {
+    "login": "Sign In",
+    "register": "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "rememberSession": "Remember session",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "accounts": {
+    "title": "Accounts",
+    "create": "Create account",
+    "edit": "Edit account",
+    "name": "Account name",
+    "type": "Type",
+    "balance": "Balance",
+    "noAccounts": "No accounts yet"
+  },
+  "settings": {
+    "title": "Settings",
+    "closingDay": "Month closing day",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "language": "Language",
+    "notifications": "Notifications"
+  },
+  "onboarding": {
+    "welcome": "Welcome to Aford!",
+    "step1": "Create your accounts",
+    "step2": "Create your categories",
+    "step3": "Configure your month",
+    "finish": "Let's start!"
+  }
+}
