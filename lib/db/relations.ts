@@ -7,6 +7,7 @@ import {
   transactions,
   transactionTags,
   transfers,
+  budgets,
 } from './schema';
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -24,6 +25,15 @@ export const bankAccountsRelations = relations(bankAccounts, ({ one, many }) => 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
   user: one(users, { fields: [categories.userId], references: [users.id] }),
   transactions: many(transactions),
+  budgets: many(budgets),
+}));
+
+export const budgetsRelations = relations(budgets, ({ one }) => ({
+  user: one(users, { fields: [budgets.userId], references: [users.id] }),
+  category: one(categories, {
+    fields: [budgets.categoryId],
+    references: [categories.id],
+  }),
 }));
 
 export const transactionsRelations = relations(transactions, ({ one, many }) => ({
