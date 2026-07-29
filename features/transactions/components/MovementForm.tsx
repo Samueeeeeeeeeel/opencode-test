@@ -56,7 +56,13 @@ export function MovementForm({
       const result = await createInstallmentTransaction(fd);
 
       if (result?.error) {
-        setMessage('Error al crear cuotas');
+        const err = result.error as Record<string, unknown>;
+        const errMsg = typeof err === 'string'
+          ? err
+          : (err as Record<string, string[]>).form?.[0]
+            || Object.values(err as Record<string, string[]>).flat()[0]
+            || 'Error al crear cuotas';
+        setMessage(errMsg);
       } else {
         setMessage('Cuotas creadas');
         form.reset({ type: 'income', status: 'confirmed' });
@@ -75,7 +81,13 @@ export function MovementForm({
       const result = await createTransaction(fd);
 
       if (result?.error) {
-        setMessage('Error al crear transacción');
+        const err = result.error as Record<string, unknown>;
+        const errMsg = typeof err === 'string'
+          ? err
+          : (err as Record<string, string[]>).form?.[0]
+            || Object.values(err as Record<string, string[]>).flat()[0]
+            || 'Error al crear transacción';
+        setMessage(errMsg);
       } else {
         setMessage('Transacción creada');
         form.reset({ type: 'income', status: 'confirmed' });
