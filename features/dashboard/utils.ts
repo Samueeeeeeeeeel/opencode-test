@@ -6,6 +6,20 @@ export function getFinancialMonth(
   const month = referenceDate.getMonth();
   const year = referenceDate.getFullYear();
 
+  if (closingDay === 1) {
+    if (day >= 1) {
+      return {
+        start: new Date(year, month, 1),
+        end: new Date(year, month + 1, 0),
+      };
+    } else {
+      return {
+        start: new Date(year, month - 1, 1),
+        end: new Date(year, month, 0),
+      };
+    }
+  }
+
   if (day >= closingDay) {
     return {
       start: new Date(year, month - 1, closingDay),
