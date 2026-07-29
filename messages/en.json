@@ -10,7 +10,9 @@
     "debts": "Debts",
     "reports": "Reports",
     "settings": "Settings",
-    "profile": "Profile"
+    "profile": "Profile",
+    "recurring": "Recurring",
+    "transfers": "Transfers"
   },
   "common": {
     "save": "Save",
@@ -27,7 +29,20 @@
     "pending": "Pending",
     "confirmed": "Confirmed",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "all": "All",
+    "from": "From",
+    "to": "To",
+    "type": "Type",
+    "amount": "Amount",
+    "date": "Date",
+    "note": "Note",
+    "account": "Account",
+    "category": "Category",
+    "status": "Status",
+    "export": "Export",
+    "exportCSV": "Export CSV",
+    "exportExcel": "Export Excel"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -37,7 +52,98 @@
     "balanceLabel": "Balance",
     "upcomingCommitments": "Upcoming Commitments",
     "budgetProgress": "Budget Progress",
-    "noData": "No data to display"
+    "noData": "No data to display",
+    "expenseByCategory": "Expenses by category",
+    "incomeVsExpenses": "Income vs Expenses",
+    "balanceTrend": "Balance trend"
+  },
+  "reports": {
+    "title": "Reports",
+    "summary": "Summary",
+    "totalIncome": "Total income",
+    "totalExpenses": "Total expenses",
+    "balance": "Balance",
+    "byCategory": "By category",
+    "byMonth": "By month",
+    "details": "Transaction details",
+    "noTransactions": "No transactions in this period"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "create": "New transaction",
+    "edit": "Edit transaction",
+    "installment": "Installment purchase",
+    "simple": "Simple transaction",
+    "confirmTransaction": "Confirm",
+    "pendingTransaction": "Mark pending",
+    "searchPlaceholder": "Search by note, category...",
+    "filters": "Filters",
+    "noTransactions": "No transactions"
+  },
+  "categories": {
+    "title": "Categories",
+    "create": "Create category",
+    "edit": "Edit category",
+    "incomeCategories": "Income categories",
+    "expenseCategories": "Expense categories",
+    "noCategories": "No categories"
+  },
+  "tags": {
+    "title": "Tags",
+    "create": "Create tag",
+    "noTags": "No tags"
+  },
+  "budgets": {
+    "title": "Budgets",
+    "create": "Create budget",
+    "noBudgets": "No budgets for this month",
+    "spent": "spent",
+    "budgeted": "budgeted",
+    "overBudget": "You exceeded the budget by"
+  },
+  "goals": {
+    "title": "Savings Goals",
+    "create": "Create goal",
+    "addFunds": "Add funds",
+    "targetAmount": "Target amount",
+    "currentAmount": "Current amount",
+    "targetDate": "Target date",
+    "monthlySavings": "Required monthly savings",
+    "completed": "Completed",
+    "noGoals": "No savings goals"
+  },
+  "debts": {
+    "title": "Debts",
+    "create": "Create debt",
+    "registerPayment": "Register payment",
+    "totalAmount": "Total amount",
+    "paidAmount": "Paid amount",
+    "remaining": "Remaining",
+    "interestRate": "Interest rate",
+    "startDate": "Start date",
+    "dueDate": "Due date",
+    "personName": "Person/Institution",
+    "noDebts": "No debts registered"
+  },
+  "recurring": {
+    "title": "Recurring Transactions",
+    "create": "Create recurring",
+    "frequency": "Frequency",
+    "weekly": "Weekly",
+    "biweekly": "Biweekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "nextExecution": "Next execution",
+    "noRecurring": "No recurring transactions"
+  },
+  "transfers": {
+    "title": "Transfers",
+    "create": "New transfer",
+    "fromAccount": "From account",
+    "toAccount": "To account",
+    "noTransfers": "No transfers"
   },
   "auth": {
     "login": "Sign In",
@@ -57,7 +163,23 @@
     "name": "Account name",
     "type": "Type",
     "balance": "Balance",
-    "noAccounts": "No accounts yet"
+    "noAccounts": "No accounts yet",
+    "checking": "Checking",
+    "savings": "Savings",
+    "cash": "Cash",
+    "creditCard": "Credit Card"
+  },
+  "profile": {
+    "title": "Profile",
+    "name": "Name",
+    "email": "Email",
+    "changePassword": "Change Password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "updateProfile": "Update profile",
+    "passwordChanged": "Password updated",
+    "profileUpdated": "Profile updated"
   },
   "settings": {
     "title": "Settings",
@@ -67,13 +189,23 @@
     "dark": "Dark",
     "system": "System",
     "language": "Language",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "pushNotifications": "Push notifications",
+    "budgetAlerts": "Budget alerts",
+    "installmentReminders": "Installment reminders",
+    "goalReminders": "Goal reminders"
   },
   "onboarding": {
     "welcome": "Welcome to Aford!",
     "step1": "Create your accounts",
-    "step2": "Create your categories",
-    "step3": "Configure your month",
+    "step2": "Configure your month",
+    "step3": "Default categories",
     "finish": "Let's start!"
+  },
+  "export": {
+    "title": "Export data",
+    "csv": "CSV",
+    "excel": "Excel",
+    "downloading": "Downloading..."
   }
 }

@@ -10,6 +10,12 @@ import {
   budgets,
   recurringTransactions,
   recurringTags,
+  installments,
+  installmentTags,
+  goals,
+  goalTransactions,
+  debts,
+  debtPayments,
 } from './schema';
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -103,5 +109,57 @@ export const recurringTagsRelations = relations(recurringTags, ({ one }) => ({
   tag: one(tags, {
     fields: [recurringTags.tagId],
     references: [tags.id],
+  }),
+}));
+
+export const installmentsRelations = relations(installments, ({ one, many }) => ({
+  user: one(users, { fields: [installments.userId], references: [users.id] }),
+  account: one(bankAccounts, {
+    fields: [installments.accountId],
+    references: [bankAccounts.id],
+  }),
+  category: one(categories, {
+    fields: [installments.categoryId],
+    references: [categories.id],
+  }),
+  tags: many(installmentTags),
+}));
+
+export const installmentTagsRelations = relations(installmentTags, ({ one }) => ({
+  installment: one(installments, {
+    fields: [installmentTags.installmentId],
+    references: [installments.id],
+  }),
+  tag: one(tags, {
+    fields: [installmentTags.tagId],
+    references: [tags.id],
+  }),
+}));
+
+export const goalsRelations = relations(goals, ({ one, many }) => ({
+  user: one(users, { fields: [goals.userId], references: [users.id] }),
+  account: one(bankAccounts, {
+    fields: [goals.accountId],
+    references: [bankAccounts.id],
+  }),
+  transactions: many(goalTransactions),
+}));
+
+export const goalTransactionsRelations = relations(goalTransactions, ({ one }) => ({
+  goal: one(goals, {
+    fields: [goalTransactions.goalId],
+    references: [goals.id],
+  }),
+}));
+
+export const debtsRelations = relations(debts, ({ one, many }) => ({
+  user: one(users, { fields: [debts.userId], references: [users.id] }),
+  payments: many(debtPayments),
+}));
+
+export const debtPaymentsRelations = relations(debtPayments, ({ one }) => ({
+  debt: one(debts, {
+    fields: [debtPayments.debtId],
+    references: [debts.id],
   }),
 }));

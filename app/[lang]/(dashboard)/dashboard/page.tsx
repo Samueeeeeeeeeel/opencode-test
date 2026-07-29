@@ -1,10 +1,9 @@
 import { auth } from '@/features/auth/auth';
 import { db } from '@/lib/db';
-import { userSettings } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
 import { redirect, notFound } from 'next/navigation';
-import { getDictionary } from '@/lib/i18n';
-import { hasLocale } from '@/lib/i18n';
+import { getDictionary, hasLocale } from '@/lib/i18n';
+import { getDashboardData } from '@/features/dashboard/queries';
+import { DashboardClient } from './DashboardClient';
 
 export default async function DashboardPage({
   params,
@@ -27,11 +26,18 @@ export default async function DashboardPage({
   }
 
   const dict = await getDictionary(lang);
+  const data = await getDashboardData(settings?.closingDay ?? 1);
+
+  if (!data) {
+    return (
+      <div>
+        <h1 className="mb-6 text-2xl font-bold">{dict.dashboard.title}</h1>
+        <p className="text-gray-500">{dict.common.loading}</p>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1 className="mb-6 text-2xl font-bold">{dict.dashboard.title}</h1>
-      <p className="text-gray-500">{dict.common.loading}</p>
-    </div>
+    <DashboardClient data={data} dict={dict} lang={lang} />
   );
 }

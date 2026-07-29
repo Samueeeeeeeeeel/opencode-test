@@ -9,9 +9,12 @@ const navItems = [
   { href: '/transactions', label: 'Transacciones' },
   { href: '/accounts', label: 'Cuentas' },
   { href: '/categories', label: 'Categorías' },
+  { href: '/tags', label: 'Etiquetas' },
   { href: '/budgets', label: 'Presupuestos' },
   { href: '/goals', label: 'Metas' },
   { href: '/debts', label: 'Deudas' },
+  { href: '/recurring', label: 'Recurrentes' },
+  { href: '/transfers', label: 'Transferencias' },
   { href: '/reports', label: 'Reportes' },
   { href: '/settings', label: 'Configuración' },
 ];

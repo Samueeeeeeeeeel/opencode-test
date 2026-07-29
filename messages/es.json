@@ -10,7 +10,9 @@
     "debts": "Deudas",
     "reports": "Reportes",
     "settings": "Configuración",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "recurring": "Recurrentes",
+    "transfers": "Transferencias"
   },
   "common": {
     "save": "Guardar",
@@ -27,7 +29,20 @@
     "pending": "Pendiente",
     "confirmed": "Confirmada",
     "yes": "Sí",
-    "no": "No"
+    "no": "No",
+    "all": "Todos",
+    "from": "Desde",
+    "to": "Hasta",
+    "type": "Tipo",
+    "amount": "Monto",
+    "date": "Fecha",
+    "note": "Nota",
+    "account": "Cuenta",
+    "category": "Categoría",
+    "status": "Estado",
+    "export": "Exportar",
+    "exportCSV": "Exportar CSV",
+    "exportExcel": "Exportar Excel"
   },
   "dashboard": {
     "title": "Panel",
@@ -37,7 +52,98 @@
     "balanceLabel": "Balance",
     "upcomingCommitments": "Compromisos próximos",
     "budgetProgress": "Progreso de presupuestos",
-    "noData": "No hay datos para mostrar"
+    "noData": "No hay datos para mostrar",
+    "expenseByCategory": "Gastos por categoría",
+    "incomeVsExpenses": "Ingresos vs Gastos",
+    "balanceTrend": "Tendencia de saldo"
+  },
+  "reports": {
+    "title": "Reportes",
+    "summary": "Resumen",
+    "totalIncome": "Total ingresos",
+    "totalExpenses": "Total gastos",
+    "balance": "Balance",
+    "byCategory": "Por categoría",
+    "byMonth": "Por mes",
+    "details": "Detalle de transacciones",
+    "noTransactions": "No hay transacciones en este período"
+  },
+  "transactions": {
+    "title": "Transacciones",
+    "create": "Nueva transacción",
+    "edit": "Editar transacción",
+    "installment": "Compra en cuotas",
+    "simple": "Transacción simple",
+    "confirmTransaction": "Confirmar",
+    "pendingTransaction": "Marcar pendiente",
+    "searchPlaceholder": "Buscar por nota, categoría...",
+    "filters": "Filtros",
+    "noTransactions": "No hay transacciones"
+  },
+  "categories": {
+    "title": "Categorías",
+    "create": "Crear categoría",
+    "edit": "Editar categoría",
+    "incomeCategories": "Categorías de ingreso",
+    "expenseCategories": "Categorías de gasto",
+    "noCategories": "No hay categorías"
+  },
+  "tags": {
+    "title": "Etiquetas",
+    "create": "Crear etiqueta",
+    "noTags": "No hay etiquetas"
+  },
+  "budgets": {
+    "title": "Presupuestos",
+    "create": "Crear presupuesto",
+    "noBudgets": "No hay presupuestos para este mes",
+    "spent": "gastado",
+    "budgeted": "presupuestado",
+    "overBudget": "¡Excediste el presupuesto en"
+  },
+  "goals": {
+    "title": "Metas de ahorro",
+    "create": "Crear meta",
+    "addFunds": "Agregar fondos",
+    "targetAmount": "Monto objetivo",
+    "currentAmount": "Monto actual",
+    "targetDate": "Fecha objetivo",
+    "monthlySavings": "Ahorro mensual necesario",
+    "completed": "Completada",
+    "noGoals": "No hay metas de ahorro"
+  },
+  "debts": {
+    "title": "Deudas",
+    "create": "Crear deuda",
+    "registerPayment": "Registrar pago",
+    "totalAmount": "Monto total",
+    "paidAmount": "Monto pagado",
+    "remaining": "Restante",
+    "interestRate": "Tasa de interés",
+    "startDate": "Fecha de inicio",
+    "dueDate": "Fecha de vencimiento",
+    "personName": "Persona/Institución",
+    "noDebts": "No hay deudas registradas"
+  },
+  "recurring": {
+    "title": "Transacciones recurrentes",
+    "create": "Crear recurrente",
+    "frequency": "Frecuencia",
+    "weekly": "Semanal",
+    "biweekly": "Quincenal",
+    "monthly": "Mensual",
+    "yearly": "Anual",
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin",
+    "nextExecution": "Próxima ejecución",
+    "noRecurring": "No hay transacciones recurrentes"
+  },
+  "transfers": {
+    "title": "Transferencias",
+    "create": "Nueva transferencia",
+    "fromAccount": "Cuenta origen",
+    "toAccount": "Cuenta destino",
+    "noTransfers": "No hay transferencias"
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -57,7 +163,23 @@
     "name": "Nombre de la cuenta",
     "type": "Tipo",
     "balance": "Saldo",
-    "noAccounts": "No tienes cuentas creadas"
+    "noAccounts": "No tienes cuentas creadas",
+    "checking": "Cuenta corriente",
+    "savings": "Ahorro",
+    "cash": "Efectivo",
+    "creditCard": "Tarjeta de crédito"
+  },
+  "profile": {
+    "title": "Perfil",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "changePassword": "Cambiar contraseña",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "updateProfile": "Actualizar perfil",
+    "passwordChanged": "Contraseña actualizada",
+    "profileUpdated": "Perfil actualizado"
   },
   "settings": {
     "title": "Configuración",
@@ -67,13 +189,23 @@
     "dark": "Oscuro",
     "system": "Sistema",
     "language": "Idioma",
-    "notifications": "Notificaciones"
+    "notifications": "Notificaciones",
+    "pushNotifications": "Notificaciones push",
+    "budgetAlerts": "Alertas de presupuesto",
+    "installmentReminders": "Recordatorio de cuotas",
+    "goalReminders": "Recordatorio de metas"
   },
   "onboarding": {
     "welcome": "¡Bienvenido a Aford!",
     "step1": "Crea tus cuentas",
-    "step2": "Crea tus categorías",
-    "step3": "Configura tu mes",
+    "step2": "Configura tu mes",
+    "step3": "Categorías predeterminadas",
     "finish": "¡Empezar!"
+  },
+  "export": {
+    "title": "Exportar datos",
+    "csv": "CSV",
+    "excel": "Excel",
+    "downloading": "Descargando..."
   }
 }
