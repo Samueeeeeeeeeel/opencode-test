@@ -8,6 +8,8 @@ import {
   transactionTags,
   transfers,
   budgets,
+  recurringTransactions,
+  recurringTags,
 } from './schema';
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -71,5 +73,35 @@ export const transfersRelations = relations(transfers, ({ one }) => ({
     fields: [transfers.toAccountId],
     references: [bankAccounts.id],
     relationName: 'incoming',
+  }),
+}));
+
+export const recurringTransactionsRelations = relations(
+  recurringTransactions,
+  ({ one, many }) => ({
+    user: one(users, {
+      fields: [recurringTransactions.userId],
+      references: [users.id],
+    }),
+    account: one(bankAccounts, {
+      fields: [recurringTransactions.accountId],
+      references: [bankAccounts.id],
+    }),
+    category: one(categories, {
+      fields: [recurringTransactions.categoryId],
+      references: [categories.id],
+    }),
+    tags: many(recurringTags),
+  })
+);
+
+export const recurringTagsRelations = relations(recurringTags, ({ one }) => ({
+  recurring: one(recurringTransactions, {
+    fields: [recurringTags.recurringId],
+    references: [recurringTransactions.id],
+  }),
+  tag: one(tags, {
+    fields: [recurringTags.tagId],
+    references: [tags.id],
   }),
 }));
