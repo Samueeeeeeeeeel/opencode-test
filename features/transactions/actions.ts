@@ -8,6 +8,8 @@ import {
   transactionTags,
   installmentTags,
   bankAccounts,
+  categories,
+  userSettings,
 } from '@/lib/db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 import {
@@ -15,6 +17,70 @@ import {
   createInstallmentSchema,
 } from './schemas';
 import { revalidatePath } from 'next/cache';
+
+const DEFAULT_EXPENSE_CATEGORIES = [
+  { name: 'Alimentación', color: '#ef4444' },
+  { name: 'Transporte', color: '#f59e0b' },
+  { name: 'Vivienda', color: '#3b82f6' },
+  { name: 'Servicios', color: '#8b5cf6' },
+  { name: 'Salud', color: '#10b981' },
+  { name: 'Educación', color: '#ec4899' },
+  { name: 'Entretención', color: '#14b8a6' },
+  { name: 'Ropa', color: '#f97316' },
+];
+
+const DEFAULT_INCOME_CATEGORIES = [
+  { name: 'Sueldo', color: '#3b82f6' },
+  { name: 'Freelance', color: '#10b981' },
+  { name: 'Inversiones', color: '#8b5cf6' },
+  { name: 'Otros', color: '#6b7280' },
+];
+
+async function ensureDefaults(userId: string) {
+  const existingAccount = await db.query.bankAccounts.findFirst({
+    where: (a, { eq }) => eq(a.userId, userId),
+  });
+
+  if (!existingAccount) {
+    await db.insert(bankAccounts).values({
+      userId,
+      name: 'Mi cuenta',
+      type: 'checking',
+      color: '#3b82f6',
+    });
+
+    await db.insert(userSettings).values({
+      userId,
+      closingDay: 1,
+      theme: 'dark',
+      language: 'es',
+      onboardingCompleted: true,
+    }).onConflictDoNothing();
+  }
+
+  const existingCategory = await db.query.categories.findFirst({
+    where: (c, { eq }) => eq(c.userId, userId),
+  });
+
+  if (!existingCategory) {
+    for (const cat of DEFAULT_EXPENSE_CATEGORIES) {
+      await db.insert(categories).values({
+        userId,
+        name: cat.name,
+        type: 'expense',
+        color: cat.color,
+      });
+    }
+    for (const cat of DEFAULT_INCOME_CATEGORIES) {
+      await db.insert(categories).values({
+        userId,
+        name: cat.name,
+        type: 'income',
+        color: cat.color,
+      });
+    }
+  }
+}
 
 async function getAccountBalance(
   userId: string,
@@ -96,6 +162,8 @@ export async function createTransaction(formData: FormData) {
   try {
   const session = await auth();
   if (!session?.user?.id) return { error: 'No autorizado' };
+
+  await ensureDefaults(session.user!.id!);
 
   const tagIdsRaw = formData.get('tagIds');
   const tagIds = tagIdsRaw ? JSON.parse(tagIdsRaw as string) : [];
@@ -266,6 +334,8 @@ export async function createInstallmentTransaction(formData: FormData) {
   try {
   const session = await auth();
   if (!session?.user?.id) return { error: 'No autorizado' };
+
+  await ensureDefaults(session.user!.id!);
 
   const tagIdsRaw = formData.get('tagIds');
   const tagIds = tagIdsRaw ? JSON.parse(tagIdsRaw as string) : [];
